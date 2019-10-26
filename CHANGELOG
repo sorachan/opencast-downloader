@@ -1,0 +1,7 @@
+1.1
+---
+* implemented option to download all episodes or choose from all series
+* added comments
+* fixed formatting
+* replaced dig(n) by the more obvious len(str(n))
+* bug fixes

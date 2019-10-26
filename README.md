@@ -34,7 +34,7 @@ The Python script is run by `./oc_download.py` or `python3 oc_download.py`. It o
     -ls, --list-series    List available series and exit.
     -le, --list-episodes  List available episodes. (Can be used with --series.)
     -e EPISODES, --episodes EPISODES
-                            String to match for episode titles, use "*" to
+                            String to match for episode titles, use "all" to
                             download all.
     -pr, --presenter      Download presenter videos.
     -pn, --presentation   Download presentation videos.
