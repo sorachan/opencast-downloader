@@ -4,7 +4,7 @@ If your university uses OpenCast for lecture videos and you're looking for a sim
 
 ## Prerequisites
 
-To use this tool, you will need Python 3 on your system.
+To use this tool, you will need Python 3 on your system with the `requests` module installed.
 
 ## Usage
 
