@@ -1,12 +1,44 @@
 #!/usr/bin/python3
 
-import requests
 import json
 import getpass
 import os
 import argparse
 
-version = '1.1'
+# import requests, installing the module locally if necessary
+try:
+    import requests
+except ModuleNotFoundError:
+    print('Installing the \'requests\' library...')
+    import sys
+    # in a virtual environment, --user is neither necessary nor permitted
+    venv = False
+    if hasattr(sys,'real_prefix'):
+        if sys.prefix != sys.real_prefix:
+            venv = True
+    else:
+        if sys.prefix != sys.base_prefix:
+            venv = True
+    import pip._internal
+    pipargs = ['install']
+    if not venv:
+        pipargs += ['--user']
+    pipargs += ['requests']
+    if hasattr(pip._internal,'main'):
+        pip._internal.main(pipargs)
+    else:
+        try:
+            import pip._internal.main as pipmain
+            pipmain.main(pipargs)
+        except:
+            print('The library could not be installed automatically.')
+            print('Please install the \'requests\' library and re-run the ' +
+                'tool.')
+            exit(1)
+    print()
+    import requests
+
+version = '1.2'
 
 # constructing the argument parser (and the help menu)
 parser = argparse.ArgumentParser(
