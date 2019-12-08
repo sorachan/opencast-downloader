@@ -38,7 +38,7 @@ except ModuleNotFoundError:
     print()
     import requests
 
-version = '1.2'
+version = '1.3'
 
 # constructing the argument parser (and the help menu)
 parser = argparse.ArgumentParser(
@@ -408,7 +408,8 @@ if not ex_presentation:
     dl_presenter,dl_presentation = True,False
 if not ex_presenter:
     dl_presenter,dl_presentation = False,True
-if dl_presenter:
-    download(i,True,dl_presenter,dl_presentation,rs)
-if dl_presentation:
-    download(i,False,dl_presenter,dl_presentation,rs)
+for i in rg:
+    if dl_presenter:
+        download(i,True,dl_presenter,dl_presentation,rs)
+    if dl_presentation:
+        download(i,False,dl_presenter,dl_presentation,rs)
