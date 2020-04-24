@@ -1,3 +1,14 @@
+1.4
+---
+* fixed wrongful assumption about 'dcCreator' key which broke the code
+* fixed wrongful assumption about uniformity of video types within a series
+* fixed Windows bug in 'requests' installation
+* improved format_error method
+
+1.3
+---
+* fixed bug accidentally introduced in v1.1
+
 1.2
 ---
 * automatically install requests library if necessary

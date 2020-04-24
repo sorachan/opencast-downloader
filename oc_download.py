@@ -36,9 +36,14 @@ except ModuleNotFoundError:
                 'tool.')
             exit(1)
     print()
-    import requests
+    # in older versions I tried to import the requests library after
+    # installing it - this approach worked on Linux, but resulted in a
+    # ModuleNotFoundError on Windows. (the program would work on the next run,
+    # though.) oddly enough, removing the import fixed the problem: apparently
+    # pip loads the module when installing it. I will need to fix the code
+    # should this default behaviour ever change.
 
-version = '1.3'
+version = '1.4'
 
 # constructing the argument parser (and the help menu)
 parser = argparse.ArgumentParser(
@@ -136,14 +141,19 @@ except json.decoder.JSONDecodeError:
     print('Error: the file does not seem to be a valid JSON file.')
 
 # helper function for format error messages
-def format_error(d):
+def format_error(d,exc=None):
     print('Error: the webserver\'s response does not have the expected format.')
     import tempfile
-    out = tempfile.NamedTemporaryFile(delete=False)
+    out = tempfile.NamedTemporaryFile(mode="w+",delete=False)
+    if exc:
+        import traceback
+        traceback.print_exc(file=out)
+        out.write("\n")
     out.write(json.dumps(d))
     print('The output has been saved to '+out.name+'.')
     print('Please file a bug report and include this file.')
     out.close()
+    exit(1)
 
 # categorize search results by series
 try:
@@ -158,18 +168,18 @@ try:
                     'title': d['mediapackage'].get('seriestitle',k),
                     'videos': [{
                         'downloader_id': i,
-                        'creator': d['dcCreator'],
+                        'creator': d.get('dcCreator','None'),
                         'title': d['dcTitle']
                     }]
                 }
             else:
                 series[k]['videos'] += [{
                     'downloader_id': i,
-                    'creator': d['dcCreator'],
+                    'creator': d.get('dcCreator','None'),
                     'title': d['dcTitle']
                 }]
-except:
-    format_error(el.json())
+except Exception as e:
+    format_error(el.json(),exc=e)
 
 sk = list(series.keys())
 
@@ -375,7 +385,9 @@ def get_valid_filename(s):
 def download(i,is_presenter,dl_presenter,dl_presentation,reso):
     vj = res[sc['videos'][i-1]['downloader_id']]['mediapackage']
     pstr = 'presenter' if is_presenter else 'presentation'
-    vh = hls_dict[i][pstr+'/delivery']
+    vh = hls_dict[i].get(pstr+'/delivery',None)
+    if not vh:
+        return
     cl_file = vh.get(reso,None)
     if not cl_file:
         return
