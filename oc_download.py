@@ -43,7 +43,7 @@ except ModuleNotFoundError:
     # pip loads the module when installing it. I will need to fix the code
     # should this default behaviour ever change.
 
-version = '1.4'
+version = '1.5'
 
 # constructing the argument parser (and the help menu)
 parser = argparse.ArgumentParser(
@@ -151,7 +151,8 @@ def format_error(d,exc=None):
         out.write("\n")
     out.write(json.dumps(d))
     print('The output has been saved to '+out.name+'.')
-    print('Please file a bug report and include this file.')
+    print('Please open an issue on GitHub and send this file to my e-mail '+
+        'address (to be found on my GitHub page) so I can try and help.')
     out.close()
     exit(1)
 
@@ -297,25 +298,28 @@ for i in rg:
         print(vj['title'])
     hls_streams = {}
     for mi in vj['media']['track']:
-        if mi['transport'] == 'HLS':
-            md = {}
-            us = mi['url'].split('/')
-            md['hls_base'] = '/'.join(us[:len(us)-1])
-            playlist = requests.get(mi['url']).text.split('\n')
-            max_res = 0
-            rl = []
-            for j in range(len(playlist)):
-                if 'RESOLUTION' in playlist[j]:
-                    reso = playlist[j].split('RESOLUTION=')[1]
-                    md[reso] = playlist[j+1]
-                    rl += [reso]
-                    height = int(reso.split('x')[1])
-                    if height > max_res:
-                        max_res = height
-                        md['max'] = md[reso]
-            md['resolutions'] = rl
-            hls_streams[mi['type']] = md
-            hls_dict[i] = hls_streams
+        try:
+            if mi['transport'] == 'HLS':
+                md = {}
+                us = mi['url'].split('/')
+                md['hls_base'] = '/'.join(us[:len(us)-1])
+                playlist = requests.get(mi['url']).text.split('\n')
+                max_res = 0
+                rl = []
+                for j in range(len(playlist)):
+                    if 'RESOLUTION' in playlist[j]:
+                        reso = playlist[j].split('RESOLUTION=')[1]
+                        md[reso] = playlist[j+1]
+                        rl += [reso]
+                        height = int(reso.split('x')[1])
+                        if height > max_res:
+                            max_res = height
+                            md['max'] = md[reso]
+                md['resolutions'] = rl
+                hls_streams[mi['type']] = md
+                hls_dict[i] = hls_streams
+        except Exception as e:
+            format_error(vj,exc=e)
     if 'presenter/delivery' in hls_streams.keys():
         if not rs:
             print('    Available resolutions for presenter video: ' +

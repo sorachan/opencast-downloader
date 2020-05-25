@@ -1,3 +1,7 @@
+1.5
+---
+* improved error reporting
+
 1.4
 ---
 * fixed wrongful assumption about 'dcCreator' key which broke the code
